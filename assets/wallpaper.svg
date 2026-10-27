@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1650c4"/>
+      <stop offset=".38" stop-color="#3d86e6"/>
+      <stop offset=".68" stop-color="#93c2f2"/>
+      <stop offset=".8" stop-color="#d5e8fb"/>
+    </linearGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fb85a"/>
+      <stop offset="1" stop-color="#4c8f35"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#86c84a"/>
+      <stop offset=".35" stop-color="#5aa531"/>
+      <stop offset="1" stop-color="#2a6f1a"/>
+    </linearGradient>
+    <radialGradient id="shine" cx=".38" cy=".2" r=".5">
+      <stop offset="0" stop-color="#d9f59a" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#d9f59a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="softer" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="30"/></filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+
+  <g fill="#fff" filter="url(#softer)" opacity=".55">
+    <ellipse cx="260" cy="200" rx="260" ry="46"/>
+    <ellipse cx="1240" cy="150" rx="320" ry="40"/>
+    <ellipse cx="900" cy="330" rx="380" ry="36"/>
+  </g>
+  <g fill="#fff" filter="url(#soft)" opacity=".85">
+    <ellipse cx="300" cy="300" rx="150" ry="40"/>
+    <ellipse cx="420" cy="280" rx="110" ry="46"/>
+    <ellipse cx="200" cy="320" rx="90" ry="26"/>
+    <ellipse cx="1150" cy="250" rx="170" ry="44"/>
+    <ellipse cx="1290" cy="270" rx="120" ry="34"/>
+    <ellipse cx="1430" cy="420" rx="140" ry="30"/>
+    <ellipse cx="700" cy="180" rx="90" ry="22"/>
+  </g>
+
+  <path d="M0 690 C 220 610 420 600 640 650 S 1120 640 1300 600 S 1520 590 1600 610 V1000 H0Z" fill="url(#far)" opacity=".85"/>
+  <path d="M0 800 C 260 650 600 600 920 650 C 1180 690 1380 760 1600 700 V1000 H0Z" fill="url(#hill)"/>
+  <path d="M0 800 C 260 650 600 600 920 650 C 1180 690 1380 760 1600 700 V1000 H0Z" fill="url(#shine)"/>
+  <path d="M0 930 C 400 860 900 900 1600 850 V1000 H0Z" fill="#245e15" opacity=".35"/>
+</svg>

@@ -1,0 +1,758 @@
+/* ==========================================================================
+   Дмитрий Уваров — портфолио в стиле рабочего стола начала 2000-х
+   ========================================================================== */
+
+:root {
+  --tb: 30px;                 /* высота панели задач */
+  --face: #ece9d8;            /* серо-бежевая «поверхность» окон */
+  --frame: #0a3fd0;
+  --frame-dark: #002ea0;
+  --link: #215dc6;
+  --ink: #1b1b1b;
+  --muted: #5a5a5a;
+  --sel: #316ac5;
+  --ui: Tahoma, "Segoe UI", Verdana, "DejaVu Sans", sans-serif;
+  --mono: "Lucida Console", Consolas, "Courier New", monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  font: 13px/1.4 var(--ui);
+  color: var(--ink);
+  background: #245edb;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: default; }
+img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+:focus-visible { outline: 1px dotted #000; outline-offset: 1px; }
+
+/* ---------- Загрузка ---------- */
+
+.boot {
+  position: fixed; inset: 0; z-index: 1000;
+  display: grid; place-items: center;
+  background: #000; color: #fff;
+  transition: opacity .35s ease;
+  cursor: progress;
+}
+.boot.is-out { opacity: 0; }
+.skip-boot .boot, .skip-boot .welcome { display: none; }
+
+.boot__center { display: grid; justify-items: center; gap: 64px; transform: translateY(-4vh); }
+.boot__logo { display: flex; align-items: center; gap: 18px; animation: fadeUp .9s var(--ease) both; }
+.boot__mark { width: 84px; height: 84px; filter: drop-shadow(0 0 18px rgba(80, 140, 255, .35)); }
+.boot__word { display: grid; line-height: 1; }
+.boot__small { font-size: 15px; letter-spacing: .02em; color: #d6d6d6; margin: 0 0 4px 3px; }
+.boot__name {
+  font: 700 52px/1 "Franklin Gothic Medium", "Trebuchet MS", var(--ui);
+  letter-spacing: -.02em;
+}
+.boot__name sup {
+  font: italic 700 24px/1 "Trebuchet MS", var(--ui);
+  color: #ff7a1a; margin-left: 4px; vertical-align: 26px; letter-spacing: 0;
+}
+
+.boot__bar {
+  position: relative; width: 156px; height: 18px; padding: 2px;
+  border: 2px solid #b2b2b2; border-radius: 4px; overflow: hidden;
+  animation: fadeUp .9s .25s var(--ease) both;
+}
+.boot__bar span {
+  position: absolute; top: 2px; left: -40px; width: 9px; height: 10px; border-radius: 1px;
+  background: linear-gradient(#2838c7, #3c84f6 30%, #8fc0ff 50%, #3c84f6 70%, #2838c7);
+  animation: slide 2s linear infinite;
+}
+.boot__bar span:nth-child(2) { animation-delay: .12s; }
+.boot__bar span:nth-child(3) { animation-delay: .24s; }
+@keyframes slide { from { left: -36px; } 70%, to { left: 170px; } }
+
+.boot__foot {
+  position: absolute; left: 32px; right: 32px; bottom: 26px;
+  display: flex; justify-content: space-between; gap: 16px;
+  font-size: 12px; color: #c8c8c8;
+}
+.boot__foot span:last-child { font-style: italic; color: #fff; font-weight: 700; }
+.boot__skip {
+  position: absolute; bottom: 60px; left: 0; right: 0; margin: 0;
+  text-align: center; font-size: 11px; color: #555;
+  animation: fadeIn .6s 1.2s both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } }
+@keyframes fadeIn { from { opacity: 0; } }
+
+/* ---------- Приветствие ---------- */
+
+.welcome {
+  position: fixed; inset: 0; z-index: 999;
+  display: grid; grid-template-rows: 78px 1fr 78px;
+  background: #5a7edc;
+  transition: opacity .5s ease;
+}
+.welcome.is-out { opacity: 0; pointer-events: none; }
+.welcome__band--top { background: #00309c; border-bottom: 2px solid; border-image: linear-gradient(90deg, #00309c, #9fc0ff 30%, #00309c 70%) 1; }
+.welcome__band--bottom { background: #1d48c6; border-top: 2px solid; border-image: linear-gradient(90deg, #1d48c6, #f99736 30%, #1d48c6 70%) 1; }
+.welcome__mid {
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 18% 30%, #91b1ef 0%, #5a7edc 38%, #4a6fd6 100%);
+}
+.welcome__mid span {
+  font: italic 700 clamp(34px, 6vw, 64px)/1 "Trebuchet MS", var(--ui);
+  color: #fff; text-shadow: 2px 3px 2px rgba(0, 20, 90, .45);
+  animation: fadeUp .6s var(--ease) both;
+}
+
+/* ---------- Рабочий стол ---------- */
+
+.desktop {
+  position: fixed; inset: 0 0 var(--tb) 0;
+  background: #3a7bd5 url(../assets/wallpaper.svg) center / cover no-repeat;
+  overflow: hidden;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+}
+.is-booting .desktop .icons, .is-booting .taskbar { visibility: hidden; }
+.desktop.is-refresh .icons { opacity: 0; }
+
+.icons {
+  list-style: none; margin: 0; padding: 10px 6px;
+  display: grid; grid-auto-flow: row; grid-template-columns: 84px; gap: 6px;
+  position: absolute; inset: 0 auto 0 0; align-content: start;
+}
+.icons__bin { position: fixed; right: 10px; bottom: calc(var(--tb) + 10px); }
+
+.icon {
+  width: 84px; padding: 4px 2px; border: 0; background: none;
+  display: grid; justify-items: center; gap: 4px; text-align: center;
+  color: #fff; font-size: 12px; line-height: 1.25;
+}
+.icon svg { width: 48px; height: 48px; filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, .3)); transition: filter .1s; }
+.icon span { padding: 1px 3px; text-shadow: 1px 1px 1px #000, 0 0 4px rgba(0, 0, 0, .5); border: 1px dotted transparent; }
+.icon:hover span { text-decoration: none; }
+.icon.is-selected svg { filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, .3)) brightness(.78) sepia(.5) hue-rotate(185deg) saturate(2.2); }
+.icon.is-selected span { background: #0b61ff; text-shadow: none; }
+.icon:focus-visible { outline: 0; }
+.icon:focus-visible span { border-color: #ffd; }
+
+.lasso {
+  position: absolute; z-index: 5;
+  background: rgba(49, 106, 197, .25); border: 1px solid #316ac5;
+  pointer-events: none;
+}
+
+.windows { position: absolute; inset: 0; pointer-events: none; }
+.windows > * { pointer-events: auto; }
+
+/* Контекстное меню */
+.ctx, .start__right, .start__left { --menu: 1; }
+.ctx {
+  position: absolute; z-index: 9000; min-width: 196px; padding: 2px;
+  background: #fff; border: 1px solid #aca899;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, .35);
+}
+.ctx button {
+  display: block; width: 100%; padding: 4px 20px; border: 0; background: none;
+  text-align: left; font-size: 12px;
+}
+.ctx button:hover, .ctx button:focus-visible { background: var(--sel); color: #fff; outline: 0; }
+.ctx hr { margin: 3px 1px; border: 0; border-top: 1px solid #aca899; }
+
+/* Подсказка у трея */
+.balloon {
+  position: absolute; z-index: 8000; right: 12px; bottom: 14px;
+  width: min(300px, calc(100vw - 24px)); padding: 9px 26px 10px 11px;
+  background: #ffffe1; border: 1px solid #000; border-radius: 8px;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, .3);
+  font-size: 12px; cursor: pointer;
+  animation: pop .25s var(--ease) both;
+}
+.balloon::after {
+  content: ""; position: absolute; right: 60px; bottom: -14px;
+  border: 7px solid transparent; border-top: 14px solid #ffffe1;
+  border-left-width: 0;
+  filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000);
+}
+.balloon p { margin: 4px 0 0; }
+.balloon__title { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.balloon__title svg { width: 16px; height: 16px; flex: none; }
+.balloon__close {
+  position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; padding: 0;
+  border: 1px solid #919b9c; border-radius: 3px; background: #fff;
+  font: 700 12px/12px var(--ui); color: #555;
+}
+.balloon__close:hover { background: #e8604a; color: #fff; border-color: #a0311c; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.97); } }
+
+/* ---------- Окна ---------- */
+
+.win {
+  position: absolute;
+  display: flex; flex-direction: column;
+  min-width: 300px;
+  padding: 0 3px 3px;
+  background: var(--frame);
+  border-radius: 8px 8px 0 0;
+  box-shadow: inset 0 0 0 1px var(--frame-dark), 0 8px 26px rgba(0, 20, 70, .32);
+  transition: opacity .14s ease, transform .16s var(--ease);
+  animation: winIn .16s var(--ease) backwards;
+  user-select: text; -webkit-user-select: text;
+  touch-action: auto;
+}
+@keyframes winIn { from { opacity: 0; transform: scale(.97); } }
+.win.is-closing { opacity: 0; transform: scale(.97); }
+.win.is-min {
+  opacity: 0; pointer-events: none;
+  transform: translate(var(--tx, 0), var(--ty, 400px)) scale(.15);
+  transform-origin: top left;
+  transition: opacity .22s ease, transform .22s var(--ease);
+}
+.win.is-dragging { transition: none; }
+.win.is-max {
+  left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important;
+  border-radius: 0; padding: 0;
+}
+
+.win__bar {
+  flex: none; display: flex; align-items: center; gap: 5px;
+  height: 30px; margin: 0 -3px; padding: 0 5px 0 7px;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(180deg, #0997ff 0%, #0053ee 8%, #0050ee 40%, #06f 88%, #06f 93%, #005bff 95%, #003dd7 96%, #003dd7 100%);
+  color: #fff;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+}
+.win.is-max .win__bar { margin: 0; border-radius: 0; }
+.win__ico { width: 16px; height: 16px; flex: none; }
+.win__title {
+  flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font: 700 13px/1 "Trebuchet MS", var(--ui);
+  text-shadow: 1px 1px #0f1089;
+}
+.win__btns { display: flex; gap: 2px; }
+.win__btn {
+  position: relative; width: 21px; height: 21px; padding: 0;
+  border: 1px solid #fff; border-radius: 3px;
+  background: radial-gradient(circle at 90% 90%, #0054e9 0%, #2263d5 55%, #4479e4 70%, #a3bbec 90%, #fff 100%);
+  box-shadow: inset 0 -1px 2px 1px rgba(0, 0, 0, .1);
+}
+.win__btn:hover { filter: brightness(1.12); }
+.win__btn:active { filter: brightness(.9); }
+.win__btn::before, .win__btn::after { content: ""; position: absolute; background: #fff; }
+.win__btn--min::before { left: 4px; bottom: 4px; width: 8px; height: 3px; }
+.win__btn--max::before { inset: 3px; background: none; border: 1px solid #fff; border-top-width: 3px; }
+.win.is-max .win__btn--max::before { inset: 6px 7px 3px 3px; }
+.win.is-max .win__btn--max::after { inset: 3px 3px 7px 7px; background: none; border: 1px solid #fff; border-top-width: 2px; border-left: 0; border-bottom: 0; }
+.win__btn--close { background: radial-gradient(circle at 90% 90%, #cc4600 0%, #dc6527 55%, #cd7546 70%, #ffccb2 90%, #fff 100%); }
+.win__btn--close::before, .win__btn--close::after { left: 50%; top: 50%; width: 13px; height: 2px; margin: -1px 0 0 -6.5px; transform: rotate(45deg); }
+.win__btn--close::after { transform: rotate(-45deg); }
+
+/* неактивное окно */
+.win:not(.is-active) { background: #7a96df; box-shadow: inset 0 0 0 1px #6b84c8, 0 4px 14px rgba(0, 20, 70, .2); }
+.win:not(.is-active) .win__bar { background: linear-gradient(180deg, #7697e7 0%, #7e9ee3 3%, #94afe8 6%, #97b4e9 8%, #82a5e4 14%, #7c9fe2 17%, #7996de 25%, #7b99e1 56%, #82a9e9 81%, #80a5e7 89%, #7b96e1 94%, #7a93df 97%, #abbae3 100%); }
+.win:not(.is-active) .win__title { color: #d8e4f8; text-shadow: none; }
+.win:not(.is-active) .win__btn { opacity: .6; }
+
+.win__body {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  background: var(--face);
+  overflow: hidden;
+  container-type: inline-size;
+}
+.win__body > * { flex: 1; min-height: 0; }
+
+.win__grip {
+  position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; cursor: nwse-resize;
+  background:
+    linear-gradient(135deg, transparent 55%, #a19e8f 55% 62%, transparent 62% 70%, #a19e8f 70% 77%, transparent 77% 85%, #a19e8f 85% 92%, transparent 92%);
+}
+.win.is-max .win__grip { display: none; }
+
+/* ---------- Кнопки и поля ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 76px; min-height: 23px; padding: 3px 12px;
+  border: 1px solid #003c74; border-radius: 3px;
+  background: linear-gradient(180deg, #fff 0%, #ecebe6 86%, #d6d0c5 100%);
+  font-size: 12px; color: #000; text-decoration: none; white-space: nowrap;
+}
+.btn:hover { box-shadow: inset -1px 1px #fff0cf, inset 1px 2px #fdd889, inset -2px 2px #fbc761, inset 2px -2px #e5a01a; }
+.btn:active { background: linear-gradient(180deg, #cdcac3 0%, #e3e3db 8%, #e5e5de 94%, #f2f2f1 100%); box-shadow: none; }
+.btn:focus-visible, .btn--default { box-shadow: inset -1px 1px #cee7ff, inset 1px 2px #98b8ea, inset -2px 2px #bcd4f6, inset 1px -1px #89ade4, inset 2px -2px #89ade4; outline: 0; }
+.btn:disabled { color: #a1a192; border-color: #c9c7ba; background: #f4f3ee; box-shadow: none; }
+.btn--sm { min-width: 0; padding: 2px 10px; }
+.btn--go {
+  border-color: #1d6b13; color: #fff; font-weight: 700;
+  background: linear-gradient(180deg, #74d15e 0%, #3fa52f 50%, #2e8b20 100%);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .25);
+}
+.btn--go:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45); filter: brightness(1.05); }
+.btn--go:active { filter: brightness(.92); }
+
+input:not([type="radio"]), textarea, select {
+  width: 100%; padding: 3px 5px;
+  border: 1px solid #7f9db9; border-radius: 0; background: #fff;
+  font-size: 13px; color: #000;
+}
+input:focus, textarea:focus, select:focus { outline: 0; border-color: #316ac5; box-shadow: 0 0 0 1px #c3d3f2; }
+textarea { resize: vertical; }
+::placeholder { color: #9a9a9a; }
+
+/* ---------- Общие части окон ---------- */
+
+.xp-menu {
+  flex: none; display: flex; gap: 0; padding: 1px 2px;
+  border-bottom: 1px solid #fff; box-shadow: 0 1px #d1cdb8;
+  background: var(--face); font-size: 12px; user-select: none;
+}
+.xp-menu span { padding: 2px 7px; color: #000; }
+
+.xp-tools {
+  flex: none; display: flex; align-items: center; gap: 2px; padding: 2px 4px;
+  border-bottom: 1px solid #d1cdb8; background: var(--face);
+}
+.tool {
+  display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 6px;
+  border: 1px solid transparent; border-radius: 3px; background: none; font-size: 12px;
+}
+.tool svg { width: 24px; height: 24px; }
+.tool--fwd svg { transform: scaleX(-1); }
+.tool:not(:disabled):hover { border-color: #d0ccbc; background: #f4f3ee; box-shadow: inset 0 -2px #d6d2c2; }
+.tool:disabled { opacity: .45; filter: grayscale(1); }
+.tool-sep { width: 1px; height: 26px; margin: 0 4px; background: #c9c5b2; box-shadow: 1px 0 #fff; }
+
+.xp-addr {
+  flex: none; display: flex; align-items: center; gap: 6px; padding: 3px 6px;
+  border-bottom: 1px solid #d1cdb8; background: var(--face); font-size: 12px;
+}
+.xp-addr__label { color: #6f6d63; }
+.xp-addr__field {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px; height: 22px; padding: 0 4px;
+  border: 1px solid #7f9db9; background: #fff; white-space: nowrap; overflow: hidden;
+}
+.xp-addr__field svg { width: 16px; height: 16px; flex: none; }
+.xp-addr__field span { overflow: hidden; text-overflow: ellipsis; }
+
+.xp-status {
+  flex: none; display: flex; justify-content: space-between; gap: 12px; padding: 3px 8px;
+  border-top: 1px solid #fff; box-shadow: 0 -1px #d1cdb8; background: var(--face);
+  font-size: 11px; color: #3b3b3b;
+}
+.xp-status__hint { color: #77756a; }
+
+/* ---------- Проводник ---------- */
+
+.explorer { display: flex; flex-direction: column; background: var(--face); }
+.explorer__main { flex: 1; min-height: 0; display: flex; }
+
+.taskpane {
+  flex: none; width: 200px; padding: 12px 10px; overflow: auto;
+  background: linear-gradient(180deg, #7ba2e7 0%, #6375d6 100%);
+}
+.tp { margin-bottom: 12px; border-radius: 4px 4px 0 0; overflow: hidden; }
+.tp h3 {
+  margin: 0; padding: 5px 10px;
+  background: linear-gradient(90deg, #fff 0%, #c6d3f7 100%);
+  font-size: 12px; color: #215dc6;
+}
+.tp--special h3 { background: linear-gradient(90deg, #0c4fd8 0%, #2a73f0 100%); color: #fff; }
+.tp ul { list-style: none; margin: 0; padding: 7px 8px; background: #d6dff7; border: 1px solid #fff; border-top: 0; }
+.tp--special ul { background: #eff3ff; }
+.tp li button {
+  display: flex; align-items: center; gap: 6px; width: 100%; padding: 3px 2px;
+  border: 0; background: none; text-align: left; font-size: 12px; color: var(--link); cursor: pointer;
+}
+.tp li button:hover span { text-decoration: underline; color: #428eff; }
+.tp li svg { width: 16px; height: 16px; flex: none; }
+.tp__body { padding: 8px 10px 10px; background: #d6dff7; border: 1px solid #fff; border-top: 0; font-size: 12px; }
+.tp__body p { margin: 4px 0 8px; color: #333; }
+.tp__body b { display: block; }
+
+.files {
+  flex: 1; min-width: 0; overflow: auto;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); align-content: start; gap: 14px 10px;
+  padding: 16px; background: #fff;
+}
+.file {
+  display: grid; justify-items: center; gap: 6px; padding: 4px; border: 1px solid transparent; border-radius: 2px;
+  background: none; text-align: center; font-size: 12px;
+}
+.file__thumb {
+  display: block; width: 100%; aspect-ratio: 16 / 10; padding: 3px;
+  border: 1px solid #d0d0bf; background: #fff;
+  box-shadow: 1px 1px 0 #ebe9de;
+}
+.file__thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.file__ico { width: 48px; height: 48px; }
+.file__name { padding: 1px 4px; border: 1px dotted transparent; }
+.file:hover .file__thumb { border-color: #9db1d9; }
+.file[aria-selected="true"] .file__thumb { border: 2px solid #316ac5; padding: 2px; }
+.file[aria-selected="true"] .file__name { background: var(--sel); color: #fff; }
+.file[aria-selected="true"] .file__ico { filter: brightness(.8) sepia(.5) hue-rotate(185deg) saturate(2); }
+.file:focus-visible { outline: 0; }
+.file:focus-visible .file__name { border-color: #000; }
+.files:has(.file--thumb) { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+
+@container (max-width: 560px) {
+  .taskpane { display: none; }
+  .files { padding: 12px; }
+  .xp-status__hint { display: none; }
+}
+
+/* ---------- Блокнот ---------- */
+
+.notepad { display: flex; flex-direction: column; }
+.notepad__text {
+  flex: 1; width: 100%; padding: 6px 8px;
+  border: 0; border-top: 1px solid #a7a6aa; box-shadow: none !important;
+  resize: none; background: #fff;
+  font: 14px/1.5 var(--mono); color: #000;
+  user-select: text; -webkit-user-select: text;
+}
+
+/* ---------- Контакты ---------- */
+
+.contacts { display: flex; flex-direction: column; padding: 14px 16px 12px; background: #fff; }
+.contacts__lead { margin: 0 0 10px; color: var(--muted); }
+.contacts__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.contacts__list a {
+  display: flex; align-items: center; gap: 12px; padding: 7px 8px;
+  border: 1px solid transparent; border-radius: 3px; color: inherit; text-decoration: none;
+}
+.contacts__list a:hover, .contacts__list a:focus-visible { background: #e8effc; border-color: #b6c9ee; outline: 0; }
+.contacts__list svg { width: 34px; height: 34px; flex: none; }
+.contacts__list b { display: block; font-size: 13px; }
+.contacts__list small { color: var(--link); font-size: 12px; }
+.contacts__foot {
+  margin-top: auto; padding-top: 10px; border-top: 1px solid #e3e1d5;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  color: var(--muted); font-size: 12px;
+}
+
+/* ---------- Карточка проекта ---------- */
+
+.work { display: flex; flex-direction: column; background: var(--face); }
+.work__wrap { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr); }
+.work__stage {
+  position: relative; padding: 26px 40px 40px 26px; overflow: hidden;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(0, 0, 0, .07) 1px, transparent 0) 0 0 / 14px 14px,
+    linear-gradient(160deg, #f3f2ea, #dedbcb);
+  border-right: 1px solid #c9c5b2;
+}
+.work__desk {
+  margin: 0; border: 1px solid #9a988d; border-radius: 6px 6px 3px 3px; overflow: hidden; background: #fff;
+  box-shadow: 0 14px 30px -12px rgba(30, 30, 20, .45);
+}
+.work__chrome { display: flex; gap: 5px; padding: 7px 9px; background: linear-gradient(#f7f6f1, #e3e1d6); border-bottom: 1px solid #c9c7bb; }
+.work__chrome i { width: 9px; height: 9px; border-radius: 50%; background: #cfcdbf; }
+.work__desk img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.work__phone {
+  position: absolute; right: 22px; bottom: 22px; width: 23%; min-width: 92px; margin: 0;
+  padding: 6px; border-radius: 18px; background: #1d1d1f;
+  box-shadow: 0 18px 30px -10px rgba(0, 0, 0, .5);
+}
+.work__phone img { border-radius: 13px; aspect-ratio: 390 / 760; object-fit: cover; object-position: top; }
+
+.work__info { overflow: auto; padding: 22px 24px 24px; background: #fff; }
+.work__kind { margin: 0 0 4px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #7a7766; }
+.work__info h2 { margin: 0 0 14px; font: 700 21px/1.2 "Trebuchet MS", var(--ui); color: #0b3a9e; }
+.work__info h3 {
+  margin: 16px 0 6px; padding-bottom: 3px; font-size: 12px; color: #215dc6;
+  border-bottom: 1px solid; border-image: linear-gradient(90deg, #8eb1ec, transparent) 1;
+}
+.work__info p { margin: 0; }
+.work__info ul { margin: 0; padding-left: 18px; }
+.work__info li { margin: 3px 0; }
+.work__info li::marker { color: #3fa52f; }
+.work__stack { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px !important; }
+.work__stack span { padding: 2px 8px; border: 1px solid #c9d6ee; border-radius: 10px; background: #eef3fc; font-size: 11px; color: #2d4f8e; }
+.work__cta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.work__cta .btn { min-height: 30px; padding: 4px 16px; font-size: 13px; }
+
+@container (max-width: 720px) {
+  .work__wrap { grid-template-columns: 1fr; overflow: auto; }
+  .work__stage { border-right: 0; border-bottom: 1px solid #c9c5b2; padding: 18px 70px 26px 18px; }
+  .work__phone { right: 14px; bottom: 14px; width: 26%; }
+  .work__info { overflow: visible; padding: 18px; }
+}
+
+/* ---------- Диалог ---------- */
+
+.alert { display: flex; flex-direction: column; justify-content: space-between; padding: 16px 16px 12px; }
+.alert__row { display: flex; gap: 14px; align-items: flex-start; }
+.alert__row p { margin: 4px 0 0; }
+.alert__ico { width: 34px; height: 34px; flex: none; }
+.alert__btns { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+.win--alert { height: auto !important; }
+.win--alert .win__btn--min { display: none; }
+
+/* ---------- Мастер заявки ---------- */
+
+.wiz { display: flex; flex-direction: column; background: var(--face); }
+.wiz__page { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #fff; overflow: auto; }
+.wiz--welcome .wiz__page { flex-direction: row; }
+.wiz__side {
+  flex: none; width: 164px; display: flex; justify-content: center; padding-top: 28px;
+  background: linear-gradient(180deg, #0a3fbf 0%, #3d7be6 60%, #8ab4f5 100%);
+}
+.wiz__side svg { width: 96px; height: 96px; filter: drop-shadow(0 4px 8px rgba(0, 0, 40, .4)); }
+.wiz__intro { padding: 20px 22px; }
+.wiz__intro h2 { margin: 0 0 16px; font: 700 19px/1.25 "Trebuchet MS", var(--ui); }
+.wiz__intro p { margin: 0 0 10px; }
+.wiz__muted { color: var(--muted); font-size: 12px; }
+
+.wiz__head {
+  flex: none; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 14px 10px 22px; border-bottom: 1px solid #aca899;
+}
+.wiz__head b { display: block; font-size: 13px; }
+.wiz__head span { display: block; padding-left: 14px; color: var(--muted); font-size: 12px; }
+.wiz__head svg { width: 40px; height: 40px; flex: none; }
+.wiz__body { margin: 0; padding: 14px 22px 16px 36px; border: 0; background: var(--face); flex: 1; }
+.wiz__radios { display: grid; gap: 4px; align-content: start; }
+.radio { display: flex; gap: 8px; align-items: flex-start; padding: 5px 6px; border-radius: 3px; }
+.radio:hover { background: #e3e0cf; }
+.radio input { margin: 3px 0 0; accent-color: #2a63d8; }
+.radio b { display: block; font-weight: 400; }
+.radio small { display: block; color: var(--muted); font-size: 11px; }
+.radio:has(input:checked) b { font-weight: 700; }
+.wiz__note { margin: 6px 0 0 6px; font-size: 12px; color: #215dc6; }
+.is-shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+.wiz__grid { display: grid; grid-template-columns: 150px 1fr; gap: 8px 12px; align-items: center; align-content: start; }
+.wiz__grid label, .wiz__lbl { font-size: 12px; }
+.wiz__grid label[for="f-wish"] { align-self: start; padding-top: 3px; }
+.wiz__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 6px;
+  border: 1px solid #b9b6a6; border-radius: 3px; background: #fff; font-size: 12px;
+}
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip svg { width: 18px; height: 18px; }
+.chip:has(input:checked) { border-color: #316ac5; background: #e8effc; box-shadow: inset 0 0 0 1px #316ac5; }
+.chip:has(input:focus-visible) { outline: 1px dotted #000; }
+.wiz__err { grid-column: 1 / -1; margin: 2px 0 0; color: #c0311a; font-size: 12px; }
+.wiz__sum {
+  margin: 0 0 10px; padding: 10px 12px; max-height: 190px; overflow: auto;
+  border: 1px solid #7f9db9; background: #fff;
+  font: 12px/1.5 var(--mono); white-space: pre-wrap;
+}
+.wiz__foot {
+  flex: none; display: flex; justify-content: flex-end; gap: 6px; padding: 10px 12px;
+  border-top: 1px solid #fff; box-shadow: 0 -1px #aca899;
+}
+.wiz__foot [data-cancel] { margin-left: 10px; }
+
+@container (max-width: 520px) {
+  .wiz__side { display: none; }
+  .wiz__grid { grid-template-columns: 1fr; gap: 4px; }
+  .wiz__grid label:not(:first-child) { margin-top: 6px; }
+  .wiz__body { padding: 12px 14px; }
+}
+
+/* ---------- Панель задач ---------- */
+
+.taskbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 9500; height: var(--tb);
+  display: flex; align-items: stretch;
+  background: linear-gradient(180deg, #1f2f86 0, #3165c4 3%, #3682e5 6%, #4490e6 10%, #3883e5 12%, #2b71e0 15%, #2663da 18%, #235bd6 20%, #2258d5 23%, #2157d6 38%, #245ddb 54%, #2562df 86%, #245fdc 89%, #2158d4 92%, #1d4ec0 95%, #1941a5 98%);
+  user-select: none; -webkit-user-select: none;
+}
+
+.startbtn {
+  flex: none; display: flex; align-items: center; gap: 5px; padding: 0 22px 2px 10px; margin-right: 10px;
+  border: 0; border-radius: 0 12px 12px 0;
+  background: linear-gradient(180deg, #3a9d3a 0%, #5fc25f 8%, #3c9e3c 30%, #36953a 70%, #2a7f2a 100%);
+  box-shadow: inset -3px 0 4px -1px rgba(0, 0, 0, .35), inset 0 1px 2px rgba(255, 255, 255, .5), 2px 0 3px rgba(0, 0, 0, .25);
+  color: #fff; font: italic 700 18px/1 "Trebuchet MS", var(--ui);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, .6);
+}
+.startbtn svg { width: 22px; height: 22px; filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, .4)); }
+.startbtn:hover { filter: brightness(1.1); }
+.startbtn.is-on { filter: brightness(.88); box-shadow: inset 2px 2px 4px rgba(0, 0, 0, .4); }
+
+.tasks { flex: 1; min-width: 0; display: flex; gap: 3px; padding: 3px 4px; overflow: hidden; }
+.task {
+  flex: 0 1 170px; min-width: 40px; display: flex; align-items: center; gap: 6px; padding: 0 8px;
+  border: 0; border-radius: 3px;
+  background: linear-gradient(180deg, #4f97ff 0%, #3c81f3 12%, #3a7ff0 90%, #2d69d7 100%);
+  box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .25), inset 1px 1px 0 rgba(255, 255, 255, .25);
+  color: #fff; font-size: 11px; text-align: left;
+}
+.task svg { width: 16px; height: 16px; flex: none; }
+.task span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.task:hover { background: linear-gradient(180deg, #67a7ff 0%, #5393ff 15%, #4c8cfb 90%, #3e7ae6 100%); }
+.task.is-active { background: #1e52b7; box-shadow: inset 1px 1px 2px rgba(0, 0, 0, .5); }
+
+.tray {
+  flex: none; display: flex; align-items: center; gap: 6px; padding: 0 12px 0 10px;
+  background: linear-gradient(180deg, #0c59b9 1%, #139ee9 6%, #18b5f2 10%, #139beb 14%, #1290e8 19%, #0d8dea 63%, #0d9ff1 81%, #0f9eed 88%, #119be9 91%, #1392e2 94%, #137ed7 97%, #095bc9);
+  border-left: 1px solid #092e5c; box-shadow: inset 1px 0 1px #18bbff;
+  color: #fff; font-size: 11px;
+}
+.tray svg { width: 16px; height: 16px; }
+.tray time { margin-left: 4px; }
+
+/* ---------- Пуск ---------- */
+
+.start {
+  position: fixed; left: 0; bottom: var(--tb); z-index: 9600;
+  width: min(390px, 100vw);
+  border-radius: 7px 7px 0 0; overflow: hidden;
+  background: #fff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, .45);
+  border: 1px solid #0b3eab; border-bottom: 0;
+  animation: rise .14s ease both;
+  user-select: none; -webkit-user-select: none;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+.start__head {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: linear-gradient(180deg, #1868ce 0%, #0e60cb 12%, #0e60cb 20%, #1164cf 32%, #1667cf 33%, #1b6cd3 47%, #1e70d9 54%, #2476dc 60%, #2978e0 65%, #3482e3 77%, #3786e5 79%, #428ee9 90%, #4791eb 100%);
+  color: #fff; text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
+}
+.start__head b { display: block; font: 700 15px/1.2 "Trebuchet MS", var(--ui); }
+.start__head small { font-size: 11px; opacity: .9; }
+.start__avatar {
+  position: relative; width: 48px; height: 48px; flex: none;
+  border: 2px solid #fff; border-radius: 4px; overflow: hidden;
+  background: linear-gradient(135deg, #f7a54a, #e5551e);
+  display: grid; place-items: center;
+  font: 700 18px/1 "Trebuchet MS", var(--ui);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+.start__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.start__head::after { content: ""; }
+
+.start__body { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #f6a35b; }
+.start__left, .start__right { list-style: none; margin: 0; padding: 6px 4px; }
+.start__right { background: #d3e5fa; border-left: 1px solid #95bdee; }
+.start__body button, .start__body a {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 5px 6px;
+  border: 0; border-radius: 0; background: none; color: #000; text-align: left; text-decoration: none; font-size: 12px;
+}
+.start__body svg { width: 24px; height: 24px; flex: none; }
+.start__right a, .start__right button { color: #0a246a; }
+.start__right svg { width: 22px; height: 22px; }
+.start__big svg { width: 32px; height: 32px; }
+.start__big b { display: block; }
+.start__big small { display: block; color: #6c6c6c; font-size: 11px; }
+.start__body button:hover, .start__body a:hover,
+.start__body button:focus-visible, .start__body a:focus-visible { background: var(--sel); color: #fff; outline: 0; }
+.start__body button:hover small, .start__body button:focus-visible small { color: #e4ecff; }
+.start__sep { height: 1px; margin: 5px 6px; background: linear-gradient(90deg, transparent, #c3c3c3 20%, #c3c3c3 80%, transparent); }
+.start__right .start__sep { background: linear-gradient(90deg, transparent, #a3c2ea 20%, #a3c2ea 80%, transparent); }
+
+.start__foot {
+  display: flex; justify-content: flex-end; gap: 6px; padding: 6px 8px;
+  background: linear-gradient(180deg, #4282d6 0%, #3b85e0 3%, #418ae3 5%, #418ae3 17%, #3c87e2 21%, #3786e4 26%, #3482e3 29%, #2e7ee1 39%, #2374df 49%, #2072db 57%, #196edb 62%, #176bd8 72%, #1468d6 75%, #1165d6 83%, #0f61cb 88%);
+}
+.start__foot button {
+  display: flex; align-items: center; gap: 5px; padding: 3px 6px; border: 0; border-radius: 3px; background: none;
+  color: #fff; font-size: 12px;
+}
+.start__foot svg { width: 22px; height: 22px; }
+.start__foot button:hover { background: rgba(255, 255, 255, .16); }
+
+/* ---------- Выключение ---------- */
+
+body.is-grey .desktop, body.is-grey .taskbar { filter: grayscale(1) brightness(.85); transition: filter 1s ease; }
+.shutdown { position: fixed; inset: 0; z-index: 9800; display: grid; place-items: center; }
+.shutdown__dlg { width: min(330px, calc(100vw - 32px)); border-radius: 4px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, .55); animation: pop .2s var(--ease) both; }
+.shutdown__head {
+  display: flex; justify-content: space-between; align-items: center; height: 46px; padding: 0 12px 0 14px;
+  background: #00309c; color: #fff; font: 700 15px/1 "Trebuchet MS", var(--ui);
+}
+.shutdown__head svg { width: 28px; height: 28px; }
+.shutdown__body {
+  display: flex; justify-content: space-around; padding: 26px 8px 22px;
+  background: linear-gradient(90deg, #5a7edc, #7d9ef0 50%, #5a7edc);
+  border-top: 2px solid; border-image: linear-gradient(90deg, #5a7edc, #b2c8f8 50%, #5a7edc) 1;
+}
+.shutdown__body button { display: grid; justify-items: center; gap: 6px; width: 92px; padding: 0; border: 0; background: none; color: #fff; font-size: 12px; }
+.shutdown__body svg { width: 34px; height: 34px; transition: filter .12s; }
+.shutdown__body button:hover svg, .shutdown__body button:focus-visible svg { filter: brightness(1.18) drop-shadow(0 0 4px rgba(255, 255, 255, .8)); }
+.shutdown__body button:focus-visible { outline: 0; }
+.shutdown__body button:focus-visible span { outline: 1px dotted #fff; }
+.shutdown__foot { display: flex; justify-content: flex-end; padding: 10px 12px; background: #00309c; }
+
+.off {
+  position: fixed; inset: 0; z-index: 9900;
+  display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center;
+  background: #000; color: #f0a050;
+}
+.off p { margin: 0; font: 700 20px/1.4 "Trebuchet MS", var(--ui); }
+.off .off__sub { margin-bottom: 26px; color: #aaa; font: 13px/1.4 var(--ui); }
+.off__btn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid #333; border-radius: 4px; background: #111; color: #ddd; }
+.off__btn:hover { border-color: #666; color: #fff; }
+.off__btn svg { width: 22px; height: 22px; }
+body.is-standby::after { content: ""; position: fixed; inset: 0; z-index: 9999; background: #000; animation: fadeIn .8s both; }
+
+.nojs { position: fixed; inset: 0; z-index: 2000; padding: 40px 24px; background: #fff; }
+
+/* ---------- Телефон ---------- */
+
+@media (max-width: 760px) {
+  :root { --tb: 40px; }
+  .icons {
+    inset: 0 0 auto 0; padding: 18px 8px;
+    grid-template-columns: repeat(4, 1fr); gap: 14px 0; justify-items: center;
+  }
+  .icons__bin { position: static; }
+  .icon { width: 86px; font-size: 12px; }
+  .icon svg { width: 52px; height: 52px; }
+
+  .win, .win.is-max {
+    left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important;
+    padding: 0; border-radius: 0; min-width: 0;
+  }
+  .win__bar { margin: 0; border-radius: 0; height: 36px; }
+  .win__btn { width: 28px; height: 28px; }
+  .win__btn--max, .win__grip { display: none; }
+  .win--alert { top: 30% !important; left: 12px !important; width: calc(100% - 24px) !important; height: auto !important; border-radius: 8px 8px 0 0; padding: 0 3px 3px; }
+  .win--alert .win__bar { border-radius: 7px 7px 0 0; margin: 0 -3px; }
+
+  .xp-menu, .tool span, .tool-sep ~ .tool span { display: none; }
+  .xp-tools { display: none; }
+
+  .startbtn { padding-right: 18px; font-size: 19px; }
+  .tray svg:not(:last-of-type) { display: none; }
+  .task { flex-basis: 44px; justify-content: center; }
+  .task span { display: none; }
+  .task svg { width: 20px; height: 20px; }
+
+  .start { width: 100vw; border-radius: 0; }
+  .start__body { grid-template-columns: 1fr; }
+  .start__right { border-left: 0; border-top: 1px solid #95bdee; }
+  .start__body button, .start__body a { padding: 8px 10px; font-size: 14px; }
+
+  .notepad__text { font-size: 13px; }
+  .balloon { bottom: 14px; }
+  .boot__name { font-size: 40px; }
+  .boot__name sup { font-size: 19px; vertical-align: 20px; }
+  .boot__mark { width: 64px; height: 64px; }
+  .boot__foot { flex-direction: column; align-items: center; gap: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .boot__bar span { animation: slide 2s linear infinite !important; }
+}
