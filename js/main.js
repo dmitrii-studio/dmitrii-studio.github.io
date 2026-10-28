@@ -541,7 +541,11 @@
       else if (ch === 'telegram') {
         // ?text= подставляет сообщение в поле ввода в приложениях Telegram; копия в буфере — на случай веб-версии
         navigator.clipboard?.writeText(text).catch(() => {});
-        window.open(`https://t.me/${C.telegram}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+        const q = `?text=${encodeURIComponent(text)}`;
+        // Встроенный браузер Telegram перехватывает ссылки t.me и теряет текст — там открываем чат через tg://
+        const inTelegram = 'TelegramWebviewProxy' in window || /Telegram/i.test(navigator.userAgent);
+        if (inTelegram) location.href = `tg://resolve?domain=${C.telegram}&${q.slice(1)}`;
+        else window.open(`https://t.me/${C.telegram}${q}`, '_blank', 'noopener');
       } else if (ch === 'email') location.href = `mailto:${C.email}?subject=${encodeURIComponent('Заявка на сайт')}&body=${encodeURIComponent(text)}`;
       close('order');
       alertBox({
