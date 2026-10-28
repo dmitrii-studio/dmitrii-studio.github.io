@@ -542,11 +542,13 @@ textarea { resize: vertical; }
 @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
 .wiz__grid { display: grid; grid-template-columns: 150px 1fr; gap: 8px 12px; align-items: center; align-content: start; }
-.wiz__grid label, .wiz__lbl { font-size: 12px; }
+.wiz__grid > label, .wiz__lbl { font-size: 12px; }
 .wiz__grid label[for="f-wish"] { align-self: start; padding-top: 3px; }
-.wiz__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* кнопки одной ширины, сколько бы мессенджеров ни было */
+.wiz__chips { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; max-width: 380px; }
 .chip {
-  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 6px;
+  display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 30px; padding: 3px 8px;
+  white-space: nowrap;
   border: 1px solid #b9b6a6; border-radius: 3px; background: #fff; font-size: 12px;
 }
 .chip input { position: absolute; opacity: 0; pointer-events: none; }
@@ -568,7 +570,7 @@ textarea { resize: vertical; }
 @container (max-width: 520px) {
   .wiz__side { display: none; }
   .wiz__grid { grid-template-columns: 1fr; gap: 4px; }
-  .wiz__grid label:not(:first-child) { margin-top: 6px; }
+  .wiz__grid > label:not(:first-child) { margin-top: 6px; }
   .wiz__body { padding: 12px 14px; }
 }
 
@@ -777,11 +779,14 @@ body.is-standby::after { content: ""; position: fixed; inset: 0; z-index: 9999; 
   .work__cta .btn { flex: 1; min-height: 40px; }
   .wiz__side { display: none; }
   .wiz__grid { grid-template-columns: 1fr; gap: 4px; }
-  .wiz__grid label:not(:first-child), .wiz__lbl { margin-top: 8px; }
+  .wiz__grid > label:not(:first-child), .wiz__lbl { margin-top: 8px; }
   .wiz__body { padding: 12px 14px; }
   .wiz__intro { padding: 18px 16px; }
   .wiz__foot .btn { min-height: 34px; }
   .radio { padding: 8px 6px; }
+  .wiz__chips { max-width: none; gap: 8px; }
+  .chip { min-height: 44px; padding: 4px 6px; font-size: 13px; }
+  .chip svg { width: 20px; height: 20px; flex: none; }
   .contacts__list a { padding: 10px 8px; }
   .alert__btns .btn { min-height: 34px; }
 }

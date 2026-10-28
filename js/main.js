@@ -289,7 +289,7 @@
         items: S.works.map((w) => ({ id: w.id, name: w.file, thumb: w.shot, w })),
         pane: `
           <section class="tp tp--special"><h3>Задачи</h3>${paneLinks([
-            paneBtn('order', 'order', 'Заказать похожий сайт'),
+            paneBtn('order', 'order', 'Заказать сайт'),
             paneBtn('contacts', 'contacts', 'Написать мне')
           ])}</section>
           <section class="tp"><h3>Другие места</h3>${paneLinks([
@@ -433,7 +433,7 @@
   ];
 
   function wizard(opts = {}) {
-    const data = { type: '', niche: '', wish: '', when: 'В течение месяца', name: '', contact: '', channel: writable[0]?.id || '', like: '' };
+    const data = { type: '', niche: '', wish: '', when: 'В течение месяца', name: '', channel: writable[0]?.id || '', like: '' };
     let step = 0;
 
     const root = html(`
@@ -468,7 +468,7 @@
         data.wish ? `Что важно: ${data.wish}` : null,
         `Сроки: ${data.when}`,
         '',
-        `Меня зовут ${data.name}. Связаться: ${data.contact}`
+        `Меня зовут ${data.name}.`
       ].filter((x) => x !== null).join('\n');
     }
 
@@ -508,24 +508,22 @@
             </select>
           </div>`;
       } else if (step === 3) {
-        page.innerHTML = head('Как с вами связаться?', 'Отвечу лично, без спама и звонков без спроса.') + `
+        page.innerHTML = head('Куда отправить заявку?', 'Отвечу лично в том же мессенджере или на почту.') + `
           <div class="wiz__body wiz__grid">
             <label for="f-name">Ваше имя</label>
             <input id="f-name" name="name" autocomplete="given-name" required value="${esc(data.name)}">
-            <label for="f-contact">Телефон или ник</label>
-            <input id="f-contact" name="contact" autocomplete="tel" required placeholder="+7… или @username" value="${esc(data.contact)}">
-            <span class="wiz__lbl">Куда отправить заявку</span>
+            <span class="wiz__lbl">Куда отправить</span>
             <div class="wiz__chips">
               ${writable.map((c) => `<label class="chip"><input type="radio" name="channel" value="${c.id}" ${data.channel === c.id ? 'checked' : ''}>${ico(c.icon)}<span>${c.label}</span></label>`).join('')}
             </div>
-            <p class="wiz__err" role="alert" hidden>Заполните имя и контакт — иначе я не смогу ответить.</p>
+            <p class="wiz__err" role="alert" hidden>Напишите, как к вам обращаться.</p>
           </div>`;
       } else {
         const ch = writable.find((c) => c.id === data.channel);
         page.innerHTML = head('Завершение работы мастера', 'Проверьте текст заявки.') + `
           <div class="wiz__body">
             <pre class="wiz__sum">${esc(summary())}</pre>
-            <p class="wiz__muted">${ch ? `После нажатия «Готово» откроется ${ch.label}${ch.id === 'telegram' ? ', а текст заявки скопируется — останется вставить его в чат' : ' с этим текстом'}.` : 'Укажите контакты в config.js.'}</p>
+            <p class="wiz__muted">${ch ? `После нажатия «Готово» откроется ${ch.label} с этим текстом — останется нажать «Отправить».` : 'Укажите контакты в config.js.'}</p>
           </div>`;
       }
       const first = $('input, textarea, select', page);
@@ -541,15 +539,16 @@
       const ch = data.channel;
       if (ch === 'whatsapp') window.open(`https://wa.me/${C.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
       else if (ch === 'telegram') {
+        // ?text= подставляет сообщение в поле ввода в приложениях Telegram; копия в буфере — на случай веб-версии
         navigator.clipboard?.writeText(text).catch(() => {});
-        window.open(`https://t.me/${C.telegram}`, '_blank', 'noopener');
+        window.open(`https://t.me/${C.telegram}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
       } else if (ch === 'email') location.href = `mailto:${C.email}?subject=${encodeURIComponent('Заявка на сайт')}&body=${encodeURIComponent(text)}`;
       close('order');
       alertBox({
         title: 'Заявка готова',
         icon: 'info',
         text: ch === 'telegram'
-          ? 'Текст заявки скопирован. Вставьте его в чат Telegram и отправьте — я отвечу лично.'
+          ? 'Нажмите «Отправить» в Telegram — я отвечу лично.\nЕсли текст не подставился сам, он уже скопирован: просто вставьте его в чат.'
           : 'Отправьте сообщение в открывшемся окне — я отвечу лично. Спасибо!'
       });
     }
@@ -558,7 +557,7 @@
       e.preventDefault();
       collect();
       if (step === 1 && !data.type) { $('.wiz__radios', page).classList.add('is-shake'); setTimeout(() => $('.wiz__radios', page)?.classList.remove('is-shake'), 400); return; }
-      if (step === 3 && (!data.name || !data.contact)) { $('.wiz__err', page).hidden = false; return; }
+      if (step === 3 && !data.name) { $('.wiz__err', page).hidden = false; return; }
       if (step === 4) return send();
       step++;
       render();
