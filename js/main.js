@@ -331,11 +331,24 @@
 
     about: {
       title: 'Обо мне.txt — Блокнот', icon: 'notepad', w: 640, h: 560, cls: 'win--notepad',
-      build: () => html(`
-        <div class="notepad">
-          <div class="xp-menu" aria-hidden="true"><span>Файл</span><span>Правка</span><span>Формат</span><span>Вид</span><span>Справка</span></div>
-          <textarea class="notepad__text" spellcheck="false" aria-label="Обо мне">${esc(S.about)}</textarea>
-        </div>`).firstElementChild
+      build: () => {
+        const root = html(`
+          <div class="notepad">
+            <div class="xp-menu" aria-hidden="true"><span>Файл</span><span>Правка</span><span>Формат</span><span>Вид</span><span>Справка</span></div>
+            <div class="notepad__text" role="textbox" aria-multiline="true" aria-label="Обо мне" spellcheck="false"></div>
+          </div>`).firstElementChild;
+        const box = $('.notepad__text', root);
+        try { box.contentEditable = 'plaintext-only'; } catch (e) { box.contentEditable = 'true'; }
+        // Каждая строка — отдельный блок: перенесённый хвост пункта списка встаёт под текст, а не под маркер
+        S.about.replace(/\n+$/, '').split('\n').forEach((line) => {
+          const d = document.createElement('div');
+          const hang = (line.match(/^\s*(?:[•–—-]|\d+\.)\s+/) || [''])[0].length;
+          if (hang) d.style.cssText = `padding-left:${hang}ch;text-indent:-${hang}ch`;
+          d.textContent = line || ' ';
+          box.append(d);
+        });
+        return root;
+      }
     },
 
     contacts: {
@@ -584,8 +597,8 @@
   icons.forEach((el) => {
     el.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (touch) { selectIcon(null); return open(el.dataset.open); }
       selectIcon(el, e.ctrlKey);
-      if (touch) open(el.dataset.open);
     });
     el.addEventListener('dblclick', () => open(el.dataset.open));
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); open(el.dataset.open); } });

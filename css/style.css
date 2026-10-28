@@ -18,9 +18,11 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; overscroll-behavior: none; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   margin: 0;
+  position: fixed; inset: 0;   /* iOS: страница не «пружинит» и не уезжает */
   overflow: hidden;
   font: 13px/1.4 var(--ui);
   color: var(--ink);
@@ -29,7 +31,8 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: default; }
+button { cursor: default; touch-action: manipulation; }
+input:not([type="radio"]), textarea { -webkit-appearance: none; appearance: none; }
 img { display: block; max-width: 100%; }
 [hidden] { display: none !important; }
 
@@ -418,11 +421,13 @@ textarea { resize: vertical; }
 
 .notepad { display: flex; flex-direction: column; }
 .notepad__text {
-  flex: 1; width: 100%; padding: 6px 8px;
-  border: 0; border-top: 1px solid #a7a6aa; box-shadow: none !important;
-  resize: none; background: #fff;
+  flex: 1; min-height: 0; overflow: auto; padding: 6px 8px;
+  border-top: 1px solid #a7a6aa; background: #fff;
   font: 14px/1.5 var(--mono); color: #000;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  outline: 0; cursor: text;
   user-select: text; -webkit-user-select: text;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ---------- Контакты ---------- */
@@ -744,12 +749,41 @@ body.is-standby::after { content: ""; position: fixed; inset: 0; z-index: 9999; 
   .start__right { border-left: 0; border-top: 1px solid #95bdee; }
   .start__body button, .start__body a { padding: 8px 10px; font-size: 14px; }
 
-  .notepad__text { font-size: 13px; }
+  .notepad__text { font-size: 13px; padding: 8px 10px; }
   .balloon { bottom: 14px; }
-  .boot__name { font-size: 40px; }
-  .boot__name sup { font-size: 19px; vertical-align: 20px; }
-  .boot__mark { width: 64px; height: 64px; }
+
+  /* iOS увеличивает страницу при фокусе на поле с шрифтом меньше 16px */
+  input:not([type="radio"]), textarea, select { font-size: 16px; }
+
+  .boot__center { gap: 48px; }
+  .boot__logo { gap: 12px; }
+  .boot__mark { width: 54px; height: 54px; }
+  .boot__small { font-size: 13px; }
+  .boot__name { font-size: 34px; }
+  .boot__name sup { font-size: 16px; vertical-align: 17px; margin-left: 2px; }
   .boot__foot { flex-direction: column; align-items: center; gap: 4px; }
+  .boot__skip { display: none; }
+
+  /* те же правила, что в @container, — для Safari до 16, где их нет */
+  .taskpane { display: none; }
+  .files, .files:has(.file--thumb) { padding: 12px; grid-template-columns: 1fr; gap: 16px; }
+  .file { font-size: 13px; }
+  .xp-status__hint { display: none; }
+  .work__wrap { grid-template-columns: 1fr; overflow: auto; -webkit-overflow-scrolling: touch; }
+  .work__stage { border-right: 0; border-bottom: 1px solid #c9c5b2; padding: 16px 64px 22px 14px; }
+  .work__phone { right: 12px; bottom: 12px; width: 27%; min-width: 0; padding: 4px; border-radius: 12px; }
+  .work__phone img { border-radius: 9px; }
+  .work__info { overflow: visible; padding: 18px 16px 24px; font-size: 14px; }
+  .work__cta .btn { flex: 1; min-height: 40px; }
+  .wiz__side { display: none; }
+  .wiz__grid { grid-template-columns: 1fr; gap: 4px; }
+  .wiz__grid label:not(:first-child), .wiz__lbl { margin-top: 8px; }
+  .wiz__body { padding: 12px 14px; }
+  .wiz__intro { padding: 18px 16px; }
+  .wiz__foot .btn { min-height: 34px; }
+  .radio { padding: 8px 6px; }
+  .contacts__list a { padding: 10px 8px; }
+  .alert__btns .btn { min-height: 34px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
