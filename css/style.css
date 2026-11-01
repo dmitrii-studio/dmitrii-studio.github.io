@@ -373,7 +373,7 @@ textarea { resize: vertical; }
 .tp li svg { width: 16px; height: 16px; flex: none; }
 .tp__body { padding: 8px 10px 10px; background: #d6dff7; border: 1px solid #fff; border-top: 0; font-size: 12px; }
 .tp__body p { margin: 4px 0 8px; color: #333; }
-.tp__body b { display: block; }
+.tp__body b { display: block; overflow-wrap: anywhere; }
 
 .files {
   flex: 1; min-width: 0; overflow: auto;
@@ -711,7 +711,8 @@ body.is-standby::after { content: ""; position: fixed; inset: 0; z-index: 9999; 
 }
 .hero__side svg { width: 72px; height: 72px; filter: drop-shadow(0 3px 6px rgba(0, 0, 40, .4)); }
 .hero__body { flex: 1; min-width: 0; padding: 18px 20px 14px; }
-.hero h1 { margin: 0 0 8px; font: 700 22px/1.2 "Trebuchet MS", var(--ui); color: #0b3a9e; }
+.hero__hello { margin: 0 0 4px; font-size: 14px; color: var(--muted); }
+.hero h1 { margin: 0 0 8px; font: 700 22px/1.2 "Trebuchet MS", var(--ui); color: #0b3a9e; text-wrap: balance; }
 .hero__sub { margin: 0 0 14px; font-size: 14px; }
 .hero__cta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .btn--big { flex: 1 1 140px; min-height: 36px; font-size: 14px; font-weight: 700; }

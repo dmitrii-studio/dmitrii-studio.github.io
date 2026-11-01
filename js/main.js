@@ -449,7 +449,7 @@
           `<li><button data-action="bin-empty">${ico('bin')}<span>Очистить корзину</span></button></li>`,
           paneBtn('works', 'folder', 'Лучше посмотреть работы')
         ])}</section>`,
-        detailsFor: (it) => `<b>${esc(it.name)}</b><p>${esc(it.what)}<br>Удалён: из моей практики</p>`,
+        detailsFor: (it) => `<b>${esc(it.name).replace(/_/g, '_<wbr>')}</b><p>${esc(it.what)}<br>Удалён: из моей практики</p>`,
         onOpen: () => alertBox({
           title: 'Ошибка открытия файла',
           icon: 'error',
