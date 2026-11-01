@@ -113,7 +113,7 @@
     });
     tasks.append(task);
 
-    const st = { el, task, opener, min: false, max: false };
+    const st = { el, task, opener, min: false, max: false, w, h };
     wins.set(id, st);
     layer.append(el);
     wireWindow(id, st, resizable);
@@ -270,12 +270,22 @@
   }
 
   // После поворота экрана и смены размера окна не должны оставаться за его краем
+  let wasMobile = isMobile();
   addEventListener('resize', () => {
     syncHero();
-    if (isMobile()) return;
+    const fromMobile = wasMobile;
+    wasMobile = isMobile();
+    if (wasMobile) return;
     const a = area();
     wins.forEach((o) => {
       if (o.max) return;
+      // С телефонной ширины окна возвращаются к обычному размеру и в центр
+      if (fromMobile) {
+        o.el.style.width = Math.min(o.w, a.w - 16) + 'px';
+        if (o.el.style.height) o.el.style.height = Math.min(o.h, a.h - 16) + 'px';
+        o.el.style.left = Math.max(8, Math.round((a.w - o.el.offsetWidth) / 2)) + 'px';
+        o.el.style.top = Math.max(8, Math.round((a.h - o.el.offsetHeight) / 2.4)) + 'px';
+      }
       o.el.style.width = Math.min(o.el.offsetWidth, a.w - 16) + 'px';
       if (o.el.style.height) o.el.style.height = Math.min(o.el.offsetHeight, a.h - 16) + 'px';
       o.el.style.left = clamp(o.el.offsetLeft, 8, Math.max(8, a.w - o.el.offsetWidth - 8)) + 'px';
